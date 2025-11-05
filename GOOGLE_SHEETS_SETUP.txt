@@ -1,0 +1,64 @@
+Google Sheets Integration Setup Instructions
+
+To make the contact form work with Google Sheets, follow these steps:
+
+1. Create a Google Sheet
+   - Go to Google Sheets (sheets.google.com)
+   - Create a new spreadsheet
+   - Add column headers in Row 1: Timestamp, Name, Email, Message
+
+2. Create a Google Apps Script
+   - Go to Google Apps Script (script.google.com)
+   - Create a new project
+   - Replace the default code with the following:
+
+function doPost(e) {
+  try {
+    // Parse the form data
+    const data = JSON.parse(e.postData.contents);
+    
+    // Get the active sheet
+    const sheet = SpreadsheetApp.openById('YOUR_SHEET_ID_HERE').getActiveSheet();
+    
+    // Add the data to the sheet
+    sheet.appendRow([
+      data.timestamp,
+      data.name,
+      data.email,
+      data.message
+    ]);
+    
+    // Return success response
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    console.error('Error:', error);
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({ result: 'error', error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+3. Deploy the Script as a Web App
+   - Click "Deploy" > "New deployment"
+   - Select "Web app" as the type
+   - Set "Execute as" to "Me"
+   - Set "Who has access" to "Anyone" (or "Anyone with Google account" for security)
+   - Click "Deploy"
+   - Copy the deployment URL (you'll need this for your website)
+
+4. Update Your Website
+   - In the contact.html file, replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' 
+     with the deployment URL you copied in step 3
+   - Example:
+     const googleAppsScriptURL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+5. Get Your Sheet ID
+   - The Sheet ID is in the URL of your Google Sheet
+   - Example URL: https://docs.google.com/spreadsheets/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit
+   - In this example, the Sheet ID is: 1AbCdEfGhIjKlMnOpQrStUvWxYz
+   - Replace 'YOUR_SHEET_ID_HERE' in the Apps Script code with your actual Sheet ID
+
+Note: For security reasons, consider restricting access to your Google Apps Script and validating the data on the server side. Also, be aware that Google Apps Script has quotas and limitations that may apply to your usage.

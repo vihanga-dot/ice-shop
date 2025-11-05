@@ -1,0 +1,80 @@
+HOW TO SET UP GOOGLE SHEETS FOR THE ICE SHOP ORDER SYSTEM
+
+Step 1: Create a Google Sheet
+1. Go to https://sheets.google.com
+2. Click the "+" or "Blank" to create a new spreadsheet
+3. Name your sheet (e.g., "Ice Shop Orders")
+
+Step 2: Set up the Headers
+Click on cell A1 and enter the following headers in Row 1:
+- A1: Order ID
+- B1: Customer ID
+- C1: Customer Name
+- D1: Customer Email
+- E1: Customer Phone
+- F1: Customer Address
+- G1: Delivery Type
+- H1: Items
+- I1: Total
+- J1: Order Date
+- K1: Status
+
+Step 3: Add some formatting (optional)
+1. Select Row 1 (click the "1" on the left)
+2. Make the headers bold (Ctrl+B or Cmd+B)
+3. Optionally freeze the header row: View > Freeze > 1 row
+
+Step 4: Get your Sheet ID
+1. Look at the URL in your browser
+2. Example URL: https://docs.google.com/spreadsheets/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit#gid=0
+3. Your Sheet ID is the long string between "/d/" and "/edit" (in this example: "1AbCdEfGhIjKlMnOpQrStUvWxYz")
+4. Save this Sheet ID for later use
+
+Step 5: Share the Google Sheet
+1. Click the "Share" button in the top right
+2. Make sure the sheet is accessible to the Google Apps Script
+3. You'll configure specific permissions in the next step
+
+Step 6: Create the Google Apps Script
+1. Go to https://script.google.com
+2. Click "New Project"
+3. Delete the default code in the editor
+4. Copy and paste the complete Google Apps Script code from GOOGLE_APPS_SCRIPT.txt
+5. Replace 'YOUR_SHEET_ID_HERE' with your actual Sheet ID
+6. Save the project (Ctrl+S or Cmd+S)
+
+Step 7: Deploy the Google Apps Script
+1. Click the "Deploy" button (rocket ship icon)
+2. Select "New deployment"
+3. For "Deployment type", select "Web app"
+4. Fill in the description (e.g., "Ice Shop Order Handler")
+5. For "Execute as", choose "Me"
+6. For "Who has access", choose "Anyone" (or "Anyone with Google account" for more security)
+7. Click "Deploy"
+8. You'll see an "Execution URL" - copy this URL and save it
+9. This URL will replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' in your script.js file
+
+Step 8: Update your website
+1. Open script.js in your ice_shop folder
+2. Find the line: const GOOGLE_SHEETS_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+3. Replace 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' with the Execution URL you copied in Step 7
+4. Save the file
+
+Step 9: Test the System
+1. Place an order through your website
+2. Check your Google Sheet - the new order should appear automatically
+3. Log into the admin section (password: scoopadmin123)
+4. Verify that orders show up in the admin panel
+5. Test updating an order status to "completed" and verify it updates in the Google Sheet
+
+Important Notes:
+- For security, you may want to restrict access to your Google Apps Script if it's collecting sensitive data
+- Google Apps Script has daily quotas, so be aware of usage limits
+- You can view execution logs in the Apps Script dashboard to troubleshoot issues
+- Make sure to keep your Sheet ID and script URL secure and do not share them publicly
+
+Troubleshooting:
+- If orders don't appear in the sheet, check the Apps Script execution logs for errors
+- Ensure the Sheet ID in the Apps Script matches your Google Sheet
+- Verify the permissions on both your Sheet and the deployed Apps Script
+- Check browser console for any JavaScript errors during form submission

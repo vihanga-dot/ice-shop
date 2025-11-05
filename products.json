@@ -1,0 +1,182 @@
+[
+    {
+        "id": 1,
+        "name": "Half Baked",
+        "description": "Vanilla and Chocolate Ice Creams mixed with fudge brownies and gobs of chocolate chip cookie dough.",
+        "price": 6.99,
+        "category": "Signature",
+        "image": "https://www.benjerry.co.uk/files/live/sites/systemsite/files/EU%20Specific%20Assets/Flavors/Product%20Assets/Half%20Baked%20Ice%20Cream/873564_EU_HalfBaked_Ingredients_1920x1920_WAA.jpg?imwidth=1200",
+        "ingredients": ["Cream", "Sugar", "Cocoa", "Brownie Chunks", "Cookie Dough"]
+    },
+    {
+        "id": 2,
+        "name": "Cherry Garcia",
+        "description": "Cherry ice cream with cherries and fudge flakes. A classic, timeless mix of fruit and chocolate.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://whatgreatgrandmaate.com/wp-content/uploads/2018/08/Vegan-Paleo-Cherry-Garcia-Ice-Cream-sq.jpg",
+        "ingredients": ["Cream", "Cherry Puree", "Cherries", "Fudge Flakes"]
+    },
+    {
+        "id": 3,
+        "name": "Brown Butter Almond Brittle",
+        "description": "Buttery, caramelized ice cream with crushed brown-butter-almond candy pieces throughout.",
+        "price": 7.49,
+        "category": "Signature",
+        "image": "https://www.recipeshare.app/imagesFood/jenis-brown-butter-almond-brittle-ice-cream.jpg",
+        "ingredients": ["Cream", "Brown Butter", "Almonds", "Caramel Brittle", "Sea Salt"]
+    },
+    {
+        "id": 4,
+        "name": "Phish Food",
+        "description": "Chocolate ice cream with gooey marshmallow swirls, caramel swirls, and fudge fish. A sweet, aquatic adventure.",
+        "price": 6.99,
+        "category": "Signature",
+        "image": "https://www.sugarhero.com/wp-content/uploads/2016/07/phish-food-1.jpg",
+        "ingredients": ["Cream", "Cocoa", "Marshmallow Swirl", "Caramel Swirl", "Fudge Pieces"]
+    },
+    {
+        "id": 5,
+        "name": "Salty Caramel",
+        "description": "Fire-toasted sugar with sea salt, vanilla, and grass-grazed milk. A perfect balance of salty and sweet.",
+        "price": 7.49,
+        "category": "Gourmet",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa0IT9KqOKEZSTGTmBv0IhtY0hFBNQiZU4oQ&s",
+        "ingredients": ["Cream", "Caramelized Sugar", "Sea Salt", "Vanilla"]
+    },
+    {
+        "id": 6,
+        "name": "Pistachio Pistachio",
+        "description": "A pure, roasted pistachio cream ice cream base, rich with real nuts and a savory finish.",
+        "price": 7.49,
+        "category": "Gourmet",
+        "image": "https://www.keep-calm-and-eat-ice-cream.com/wp-content/uploads/2022/09/Pistachio-ice-cream-hero-06.jpg",
+        "ingredients": ["Cream", "Pistachio Paste", "Pistachios", "Honey"]
+    },
+    {
+        "id": 7,
+        "name": "Strawberry Cheesecake",
+        "description": "Strawberry cheesecake ice cream with strawberries and a thick graham cracker swirl.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5dyWqA-0UML5y26iZfTEb87q8Pez46wC7vg&s",
+        "ingredients": ["Cream Cheese Base", "Strawberries", "Graham Cracker Swirl"]
+    },
+    {
+        "id": 8,
+        "name": "Americone Dream",
+        "description": "Vanilla ice cream with fudge-covered waffle cone pieces and a rich caramel swirl.",
+        "price": 6.99,
+        "category": "Signature",
+        "image": "https://stressbaking.com/wp-content/uploads/2017/02/americone-dream-ice-cream-cone-684x1024.png",
+        "ingredients": ["Cream", "Vanilla", "Caramel Swirl", "Fudge-Covered Waffle Cone"]
+    },
+    {
+        "id": 9,
+        "name": "Brambleberry Crisp",
+        "description": "Sweet-tart brambleberry jam (blackberries and blackcurrants) layered throughout vanilla ice cream with oat streusel.",
+        "price": 7.49,
+        "category": "Gourmet",
+        "image": "https://www.yourhomebasedmom.com/wp-content/uploads/2023/07/BERRY-CRISP-ICE-CREAM-2-2.jpg",
+        "ingredients": ["Vanilla Cream", "Blackberry Jam", "Blackcurrants", "Toasted Oat Streusel"]
+    },
+    {
+        "id": 10,
+        "name": "Coffee Coffee BuzzBuzzBuzz!",
+        "description": "Coffee ice cream with espresso bean fudge chunks for an extra caffeine kick.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://zhangcatherine.com/wp-content/uploads/2023/01/P1050042-scaled-scaled.jpg",
+        "ingredients": ["Coffee Cream", "Espresso", "Fudge Chunks"]
+    },
+    {
+        "id": 11,
+        "name": "Chunky Monkey",
+        "description": "Banana ice cream with fudge chunks and walnuts. Tastes like a delightful banana split in a pint.",
+        "price": 6.99,
+        "category": "Signature",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwcMqyfbKnxOBi2PJ2TBE8YFUdLbxoTX-m2Q&s",
+        "ingredients": ["Banana Cream", "Walnuts", "Fudge Chunks"]
+    },
+    {
+        "id": 12,
+        "name": "Darkest Chocolate",
+        "description": "A deeply rich, dense chocolate ice cream using the maximum amount of Fair Trade cocoa possible.",
+        "price": 7.49,
+        "category": "Gourmet",
+        "image": "https://www.cadburydessertscorner.com/hs-fs/hubfs/dc-website-2022/articles/bournville-dark-chocolate-ice-cream-why-not/bournville-dark-chocolate-ice-cream-why-not-feature.webp?width=768&height=432&name=bournville-dark-chocolate-ice-cream-why-not-feature.webp",
+        "ingredients": ["Cream", "Fair Trade Cocoa Powder", "Cane Sugar"]
+    },
+    {
+        "id": 13,
+        "name": "Mint Chocolate Cookie",
+        "description": "Mint ice cream with dark chocolate sandwich cookies. A double dose of chocolate and refreshing mint.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCzE9JUoIClswCf_F5Ml2JAZ5Mpl7hAt5lCw&s",
+        "ingredients": ["Mint Cream", "Dark Chocolate Cookies"]
+    },
+    {
+        "id": 14,
+        "name": "Peanut Butter Cup",
+        "description": "Peanut butter ice cream with rich peanut butter cups for the ultimate salty-sweet indulgence.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHphdSf2_Aztf68ZMc-sUjHGOd4Z5mB2kq3w&s",
+        "ingredients": ["Peanut Butter Cream", "Peanut Butter Cups"]
+    },
+    {
+        "id": 15,
+        "name": "Sweet Corn & Black Raspberry",
+        "description": "A truly unique combination: milky sweet corn ice cream with a floral black raspberry swirl.",
+        "price": 7.49,
+        "category": "Unique",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwzWJeasLtqoT6rVIDeOD-dNhbrkkb_DCm_w&s",
+        "ingredients": ["Sweet Corn Cream", "Black Raspberry Swirl"]
+    },
+    {
+        "id": 16,
+        "name": "The Tonight Dough",
+        "description": "Caramel and Chocolate ice creams with cookie swirls, chocolate chip cookie dough, and peanut butter cookie dough.",
+        "price": 7.29,
+        "category": "Signature",
+        "image": "https://www.scoopclub.com.au/wp-content/uploads/2024/01/Bowl-of-The-Tonight-Dough-Ice-Cream.jpg",
+        "ingredients": ["Caramel Cream", "Chocolate Cream", "Cookie Dough", "Peanut Butter Dough"]
+    },
+    {
+        "id": 17,
+        "name": "Milk & Cookies",
+        "description": "Vanilla ice cream with a mix of chocolate chip cookies, chocolate sandwich cookies, and a chocolate cookie swirl.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQClgrID6JmFFb_6Mzumt6INCRzhY10zptMrQ&s",
+        "ingredients": ["Vanilla Cream", "Chocolate Chip Cookies", "Chocolate Cookies", "Cookie Swirl"]
+    },
+    {
+        "id": 18,
+        "name": "Gooey Butter Cake",
+        "description": "Cream cheese ice cream with crumbles of golden, butter-soaked cake throughout.",
+        "price": 7.49,
+        "category": "Gourmet",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArrXHrc-nvZjN9dYwDRba-_tpnGCPWcLtOA&s",
+        "ingredients": ["Cream Cheese Cream", "Butter Cake Crumbles", "Vanilla"]
+    },
+    {
+        "id": 19,
+        "name": "Wildberry Lavender",
+        "description": "A light and floral flavor, combining honey ice cream with a blend of wild berries and subtle lavender essential oil.",
+        "price": 7.49,
+        "category": "Unique",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQilQDzIUfex2DVGFPeOMiSDtuHP8AgzpUF1Q&s",
+        "ingredients": ["Honey Cream", "Wildberry Puree", "Lavender Essence"]
+    },
+    {
+        "id": 20,
+        "name": "Chocolate Chip Cookie Dough",
+        "description": "A classic for a reason: Vanilla ice cream with huge gobs of chocolate chip cookie dough.",
+        "price": 6.99,
+        "category": "Classic",
+        "image": "https://celebratingsweets.com/wp-content/uploads/2023/04/Cookie-Dough-Ice-Cream-9.jpg",
+        "ingredients": ["Vanilla Cream", "Chocolate Chip Cookie Dough"]
+    }
+]
