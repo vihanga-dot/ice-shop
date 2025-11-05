@@ -20,11 +20,16 @@ async function loadProducts() {
     console.log("Products loaded successfully:", allProducts); // Debugging line
   } catch (error) {
     console.error("Could not fetch products:", error);
-    
+
     // For local file access (file:// protocol) or CORS errors, just initialize with an empty array
     // since fetch won't work with local files due to security restrictions
-    if (window.location.protocol === 'file:' || error.message.includes('Failed to fetch')) {
-      console.warn("Running in local file environment - products will be loaded when served through a web server.");
+    if (
+      window.location.protocol === "file:" ||
+      error.message.includes("Failed to fetch")
+    ) {
+      console.warn(
+        "Running in local file environment - products will be loaded when served through a web server."
+      );
       allProducts = []; // Initialize with empty array so the application doesn't break
     } else {
       // For other types of errors (network, server, etc.)
@@ -126,6 +131,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   animatedElements.forEach((el) => window.scrollObserver.observe(el));
 
+  // --- 5. Authentication Status Check ---
+  // Check authentication status and update UI
+  checkAuthStatus();
+
   /*
     ========================================
         Page-Specific Logic
@@ -159,11 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initOrderPage();
   }
 
-  // --- Admin Orders Page ---
-  if (document.body.id === "admin-orders-page") {
-    console.log("Initializing admin orders page"); // Debugging line
-    initAdminOrdersPage();
-  }
+  
 }); // End of DOMContentLoaded
 
 /*
@@ -176,13 +181,13 @@ function initTestimonialSlider() {
   const slides = document.querySelectorAll(".testimonial");
   const prevBtn = document.querySelector(".prev-btn");
   const nextBtn = document.querySelector(".next-btn");
-  
+
   // Check if all required elements exist before initializing
   if (!slider || !slides.length || !prevBtn || !nextBtn) {
     console.log("Testimonial elements not found, skipping initialization");
     return;
   }
-  
+
   let currentIndex = 0;
 
   function showSlide(index) {
@@ -344,109 +349,126 @@ function initProductDetailPage() {
 ========================================
 */
 function initOrderPage() {
-  const orderItemData = localStorage.getItem("cartItem");
-  const summaryContainer = document.getElementById("order-summary-items");
-  const totalElement = document.getElementById("order-total");
-
-  if (orderItemData) {
-    const item = JSON.parse(orderItemData);
-
-    summaryContainer.innerHTML = `
-            <div class="summary-item" style="display: flex; justify-content: space-between; align-items: center;">
-                <img src="${item.image}" alt="${
-      item.name
-    }" width="50" style="border-radius: 5px; margin-right: 10px;">
-                <span style="flex-grow: 1;">${item.name} (x${
-      item.quantity
-    })</span>
-                <span>$${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-        `;
-
-    totalElement.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
-  } else {
-    summaryContainer.innerHTML = "<p>Your cart is empty.</p>";
-    totalElement.textContent = "$0.00";
-  }
-
-  // Form submission & modal
-  const orderForm = document.getElementById("order-form");
-  const modalOverlay = document.getElementById("confirmation-modal");
-  const closeModalBtn = document.getElementById("close-modal");
-
-  orderForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-    const address = document.getElementById("address").value;
-    const deliveryType = document.querySelector(
-      'input[name="deliveryType"]:checked'
-    ).value;
-
-    if (name && email && phone) {
-      // Get cart item from localStorage
-      const orderItemData = localStorage.getItem("cartItem");
-
-      if (orderItemData) {
-        const item = JSON.parse(orderItemData);
-
-        // Create order object - remove image from saved data
-        const order = {
-          id: Date.now(), // Generate unique ID
-          customerId: email, // Use email as customer identifier
-          customerName: name,
-          customerEmail: email,
-          customerPhone: phone,
-          customerAddress: address,
-          deliveryType: deliveryType,
-          items: [
-            {
-              id: item.id,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              // Removed image property to keep the order data clean
-            },
-          ],
-          total: item.price * item.quantity,
-          orderDate: new Date().toISOString(),
-          status: "pending",
-        };
-
-        // Save order to Google Sheets
-        saveOrder(order).then(success => {
-          if (success) {
-            modalOverlay.classList.add("visible");
-            localStorage.removeItem("cartItem");
-          } else {
-            alert("There was an error saving your order. Please try again.");
-          }
-        }).catch(error => {
-          console.error('Error saving order:', error);
-          alert("There was an error saving your order. Please try again.");
-        });
-      } else {
-        alert("No items in cart. Please select an item first.");
-      }
-    } else {
-      let missingFields = [];
-      if (!name) missingFields.push("Name");
-      if (!email) missingFields.push("Email");
-      if (!phone) missingFields.push("Phone");
-
-      alert(
-        "Please fill in the following required fields: " +
-          missingFields.join(", ") +
-          "."
-      );
+  // Check if user is authenticated before allowing to place an order
+  isUserSignedIn().then(isSignedIn => {
+    if (!isSignedIn) {
+      // Redirect to login if not authenticated
+      alert("Please log in to place an order.");
+      window.location.href = "login.html";
+      return;
     }
-  });
+    
+    // If user is signed in, proceed with order form initialization
+    const orderItemData = localStorage.getItem("cartItem");
+    const summaryContainer = document.getElementById("order-summary-items");
+    const totalElement = document.getElementById("order-total");
 
-  closeModalBtn.addEventListener("click", () => {
-    modalOverlay.classList.remove("visible");
-    window.location.href = "index.html";
+    if (orderItemData) {
+      const item = JSON.parse(orderItemData);
+
+      summaryContainer.innerHTML = `
+              <div class="summary-item" style="display: flex; justify-content: space-between; align-items: center;">
+                  <img src="${item.image}" alt="${
+        item.name
+      }" width="50" style="border-radius: 5px; margin-right: 10px;">
+                  <span style="flex-grow: 1;">${item.name} (x${
+        item.quantity
+      })</span>
+                  <span>$${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+          `;
+
+      totalElement.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
+    } else {
+      summaryContainer.innerHTML = "<p>Your cart is empty.</p>";
+      totalElement.textContent = "$0.00";
+    }
+
+    // Get current user's email to prefill form if available
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.email) {
+      document.getElementById("email").value = currentUser.email;
+    }
+
+    // Form submission & modal
+    const orderForm = document.getElementById("order-form");
+    const modalOverlay = document.getElementById("confirmation-modal");
+    const closeModalBtn = document.getElementById("close-modal");
+
+    orderForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+      const deliveryType = document.querySelector(
+        'input[name="deliveryType"]:checked'
+      ).value;
+
+      if (name && email && phone) {
+        // Get cart item from localStorage
+        const orderItemData = localStorage.getItem("cartItem");
+
+        if (orderItemData) {
+          const item = JSON.parse(orderItemData);
+
+          // Create order object - remove image from saved data
+          const order = {
+            id: Date.now(), // Generate unique ID
+            customerId: email, // Use email as customer identifier
+            customerName: name,
+            customerEmail: email,
+            customerPhone: phone,
+            customerAddress: address,
+            deliveryType: deliveryType,
+            items: [
+              {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                // Removed image property to keep the order data clean
+              },
+            ],
+            total: item.price * item.quantity,
+            orderDate: new Date().toISOString(),
+            status: "pending",
+          };
+
+          // Save order to Google Sheets
+          saveOrder(order).then(success => {
+            if (success) {
+              modalOverlay.classList.add("visible");
+              localStorage.removeItem("cartItem");
+            } else {
+              alert("There was an error saving your order. Please try again.");
+            }
+          }).catch(error => {
+            console.error('Error saving order:', error);
+            alert("There was an error saving your order. Please try again.");
+          });
+        } else {
+          alert("No items in cart. Please select an item first.");
+        }
+      } else {
+        let missingFields = [];
+        if (!name) missingFields.push("Name");
+        if (!email) missingFields.push("Email");
+        if (!phone) missingFields.push("Phone");
+
+        alert(
+          "Please fill in the following required fields: " +
+            missingFields.join(", ") +
+            "."
+        );
+      }
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+      modalOverlay.classList.remove("visible");
+      window.location.href = "index.html";
+    });
   });
 }
 
@@ -455,325 +477,283 @@ function initOrderPage() {
     Order Management Functions
 ========================================
 */
-// Google Sheets Configuration
-const GOOGLE_SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhE_X9PL6ZehTLBni3WxLjhNbFJF_sL4ZfyCKyzV1bA5NcWYF-SnyW4wo6NLXqK1vfyw/exec'; // Replace with actual URL
 
-// Function to save order to Google Sheets
+// Function to save order to Firebase Firestore
 async function saveOrder(order) {
   try {
-    const response = await fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'saveOrder',
-        order: order
-      })
+    // Add the order to Firestore
+    const docRef = await db.collection('orders').add({
+      ...order,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     
-    const result = await response.json();
-    if (result.success) {
-      console.log('Order saved successfully to Google Sheets');
-      return true;
-    } else {
-      console.error('Error saving order:', result.error);
-      return false;
-    }
+    console.log("Order saved successfully to Firestore with ID: ", docRef.id);
+    return true;
   } catch (error) {
-    console.error('Error saving order to Google Sheets:', error);
+    console.error("Error saving order to Firestore:", error);
     return false;
   }
 }
 
-// Function to retrieve all orders from Google Sheets
+// Function to retrieve all orders from Firebase Firestore
 async function getAllOrders() {
   try {
-    const response = await fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'getAllOrders'
-      })
+    const snapshot = await db.collection('orders')
+      .orderBy('createdAt', 'desc') // Order by creation time, newest first
+      .get();
+    
+    const orders = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      // Add the document ID to the order object
+      orders.push({
+        id: doc.id,
+        ...data
+      });
     });
     
-    const result = await response.json();
-    if (result.success) {
-      return result.orders || [];
-    } else {
-      console.error('Error fetching orders:', result.error);
-      return [];
-    }
+    return orders;
   } catch (error) {
-    console.error('Error fetching orders from Google Sheets:', error);
+    console.error("Error fetching orders from Firestore:", error);
     return [];
   }
 }
 
-// Function to get order by ID from Google Sheets
+// Function to get order by ID from Firebase Firestore
 async function getOrderById(orderId) {
   try {
-    const response = await fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'getOrderById',
-        orderId: orderId
-      })
-    });
+    const doc = await db.collection('orders').doc(orderId).get();
     
-    const result = await response.json();
-    if (result.success) {
-      return result.order;
+    if (doc.exists) {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data
+      };
     } else {
-      console.error('Error fetching order:', result.error);
+      console.error("Order not found in Firestore");
       return null;
     }
   } catch (error) {
-    console.error('Error fetching order from Google Sheets:', error);
+    console.error("Error fetching order from Firestore:", error);
     return null;
   }
 }
 
-// Function to update an existing order in Google Sheets
+// Function to update an existing order in Firebase Firestore
 async function updateOrder(updatedOrder) {
   try {
-    const response = await fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        action: 'updateOrder',
-        order: updatedOrder
-      })
-    });
+    // Remove the id field since we're using it as the document ID
+    const { id, ...orderData } = updatedOrder;
     
-    const result = await response.json();
-    if (result.success) {
-      console.log('Order updated successfully in Google Sheets');
-      return true;
-    } else {
-      console.error('Error updating order:', result.error);
-      return false;
-    }
+    await db.collection('orders').doc(id).update(orderData);
+    
+    console.log("Order updated successfully in Firestore");
+    return true;
   } catch (error) {
-    console.error('Error updating order in Google Sheets:', error);
+    console.error("Error updating order in Firestore:", error);
     return false;
   }
 }
 
-// Function to update order status in Google Sheets
+// Function to update order status in Firebase Firestore
 async function updateOrderStatus(orderId, newStatus) {
   try {
-    const order = await getOrderById(orderId);
+    await db.collection('orders').doc(orderId).update({
+      status: newStatus
+    });
     
-    if (order) {
-      order.status = newStatus;
-      
-      const response = await fetch(GOOGLE_SHEETS_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'updateOrder',
-          order: order
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        // Reload the order list to reflect the change
-        if (typeof loadAndDisplayOrders === 'function') {
-          loadAndDisplayOrders();
-        }
-        
-        // Show confirmation
-        alert(`Order #${orderId} status updated to ${newStatus}`);
-      } else {
-        alert(`Error updating order: ${result.error}`);
-      }
-    } else {
-      alert(`Order #${orderId} not found`);
+    // Reload the order list to reflect the change
+    if (typeof loadAndDisplayOrders === "function") {
+      loadAndDisplayOrders();
     }
+    
+    // Show confirmation
+    alert(`Order #${orderId} status updated to ${newStatus}`);
   } catch (error) {
-    console.error('Error updating order status:', error);
+    console.error("Error updating order status in Firestore:", error);
     alert(`Error updating order status: ${error.message}`);
   }
 }
 
 /*
 ========================================
-    Admin Orders Page Functions
+    Firebase Authentication Functions
 ========================================
 */
-function initAdminOrdersPage() {
-  // Check if user is already authenticated
-  if (localStorage.getItem("adminAuthenticated") === "true") {
-    showOrdersDashboard();
-  } else {
-    showPasswordPrompt();
-  }
-}
 
-function showPasswordPrompt() {
-  document.getElementById("password-protected-section").style.display = "none";
-  document.getElementById("password-section").style.display = "block";
+// Firebase configuration - You need to add your own Firebase config from your Firebase project
+const firebaseConfig = {
+  apiKey: "AIzaSyCoUQgoOlDtHCzpoGWVcf3oDTcB4xBx5lU",
+  authDomain: "scoop-shop-8f279.firebaseapp.com",
+  projectId: "scoop-shop-8f279",
+  storageBucket: "scoop-shop-8f279.firebasestorage.app",
+  messagingSenderId: "778069988687",
+  appId: "1:778069988687:web:9d8f3ef566bbc0c77b613a",
+};
 
-  document
-    .getElementById("submit-password")
-    .addEventListener("click", checkPassword);
-  document
-    .getElementById("admin-password")
-    .addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        checkPassword();
-      }
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Function to sign up with email and password
+function signUp(email, password) {
+  return auth
+    .createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed up successfully
+      const user = userCredential.user;
+      console.log("User registered:", user);
+      return { success: true, user: user };
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error("Sign up error:", errorCode, errorMessage);
+      return { success: false, error: errorMessage };
     });
 }
 
-function checkPassword() {
-  const passwordInput = document.getElementById("admin-password").value;
-  // For this implementation, using a simple hardcoded password
-  // In a real application, you would have more secure authentication
-  const correctPassword = "scoopadmin123"; // Set a default password
-
-  if (passwordInput === correctPassword) {
-    localStorage.setItem("adminAuthenticated", "true");
-    showOrdersDashboard();
-  } else {
-    alert("Incorrect password. Please try again.");
-    document.getElementById("admin-password").value = "";
-    document.getElementById("admin-password").focus();
-  }
+// Function to sign in with email and password
+function signIn(email, password) {
+  return auth
+    .signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in successfully
+      const user = userCredential.user;
+      console.log("User signed in:", user);
+      return { success: true, user: user };
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error("Sign in error:", errorCode, errorMessage);
+      return { success: false, error: errorMessage };
+    });
 }
 
-async function showOrdersDashboard() {
-  document.getElementById("password-section").style.display = "none";
-  document.getElementById("password-protected-section").style.display = "block";
-  document.getElementById("logout-btn").style.display = "inline-block";
+// Function to sign in with Google
+function signInWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  return auth
+    .signInWithPopup(provider)
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = result.credential;
+      const token = credential.accessToken;
+      const user = result.user;
 
-  // Load and display orders
-  await loadAndDisplayOrders();
+      console.log("User signed in with Google:", user);
+      return { success: true, user: user };
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      const credential = error.credential;
 
-  // Set up export button
-  document
-    .getElementById("export-orders-btn")
-    .addEventListener("click", exportOrders);
-
-  // Set up load button
-  document.getElementById("load-orders-btn").addEventListener("click", () => {
-    document.getElementById("file-input").click();
-  });
-
-  // Set up file input change event
-  document
-    .getElementById("file-input")
-    .addEventListener("change", handleFileSelect);
-
-  // Set up logout button
-  document.getElementById("logout-btn").addEventListener("click", logout);
+      console.error("Google sign in error:", errorCode, errorMessage);
+      return { success: false, error: errorMessage };
+    });
 }
 
-function logout() {
-  localStorage.removeItem("adminAuthenticated");
-  document.getElementById("password-protected-section").style.display = "none";
-  document.getElementById("logout-btn").style.display = "none";
-  showPasswordPrompt();
+// Function to sign out
+function signOut() {
+  return auth
+    .signOut()
+    .then(() => {
+      console.log("User signed out");
+      return { success: true };
+    })
+    .catch((error) => {
+      console.error("Sign out error:", error);
+      return { success: false, error: error.message };
+    });
 }
 
-async function loadAndDisplayOrders() {
-  const orders = await getAllOrders();
-  const ordersList = document.getElementById("orders-list");
-
-  if (orders.length === 0) {
-    ordersList.innerHTML = "<p>No orders found.</p>";
-    return;
-  }
-
-  // Sort orders by date (newest first)
-  orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
-
-  ordersList.innerHTML = "";
-
-  orders.forEach((order) => {
-    const orderCard = document.createElement("div");
-    orderCard.className = "order-card";
-    
-    // Create status update button only if status is 'pending'
-    let statusButton = '';
-    if (order.status === 'pending') {
-      statusButton = `<button class="update-status-btn" data-order-id="${order.id}">Mark as Complete</button>`;
-    } else {
-      statusButton = `<span class="order-status-completed">Completed</span>`;
-    }
-    
-    orderCard.innerHTML = `
-            <div class="order-header">
-                <h3>Order #${order.id}</h3>
-                <div class="order-status">${order.status}</div>
-            </div>
-            <div class="order-details">
-                <p><strong>Customer:</strong> ${order.customerName}</p>
-                <p><strong>Email:</strong> ${order.customerEmail}</p>
-                <p><strong>Phone:</strong> ${order.customerPhone}</p>
-                <p><strong>Delivery Type:</strong> ${order.deliveryType}</p>
-                <p><strong>Address:</strong> ${
-                  order.customerAddress || "N/A"
-                }</p>
-                <p><strong>Order Date:</strong> ${new Date(
-                  order.orderDate
-                ).toLocaleString()}</p>
-                <p><strong>Total:</strong> $${order.total.toFixed(2)}</p>
-            </div>
-            <div class="order-items">
-                <h4>Items:</h4>
-                ${order.items
-                  .map(
-                    (item) => `
-                    <div class="order-item">
-                        <div>
-                            <p><strong>${item.name}</strong></p>
-                            <p>Quantity: ${
-                              item.quantity
-                            } | Price: $${item.price.toFixed(2)} each</p>
-                        </div>
-                    </div>
-                `
-                  )
-                  .join("")}
-            </div>
-            <div class="order-actions">
-                ${statusButton}
-            </div>
-        `;
-        
-    ordersList.appendChild(orderCard);
-  });
-  
-  // Add event listeners to the update status buttons
-  document.querySelectorAll('.update-status-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const orderId = parseInt(this.getAttribute('data-order-id'));
-      updateOrderStatus(orderId, 'completed');
+// Function to check if user is signed in
+function isUserSignedIn() {
+  return new Promise((resolve) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe();
+      resolve(!!user);
     });
   });
 }
 
-// Export functionality no longer needed as orders are stored in Google Sheets
+// Function to get current user
+function getCurrentUser() {
+  return auth.currentUser;
+}
+
+// Export functionality no longer needed as orders are stored in Firestore
 function exportOrders() {
-  alert("Orders are now stored in Google Sheets. No need to export.");
+  alert("Orders are now stored in Firebase. No need to export.");
 }
 
-// File loading functionality no longer needed as orders are stored in Google Sheets
+// File loading functionality no longer needed as orders are stored in Firestore
 function handleFileSelect(evt) {
-  alert("Orders are now stored in Google Sheets. File loading is no longer needed.");
+  alert(
+    "Orders are now stored in Firebase. File loading is no longer needed."
+  );
+}
+
+// Function to check authentication status and update UI
+function checkAuthStatus() {
+  // Wait for Firebase to initialize, then check auth status
+  isUserSignedIn().then(isSignedIn => {
+    updateAuthUI(isSignedIn);
+    
+    // Set up auth state listener to handle changes in authentication status
+    auth.onAuthStateChanged(user => {
+      updateAuthUI(!!user);
+    });
+  });
+}
+
+// Function to update the authentication UI elements
+function updateAuthUI(isSignedIn) {
+  // Find the login link in the navigation menu (the one with href="login.html")
+  const navLoginLink = document.querySelector('a[href="login.html"]');
+  
+  if (navLoginLink) {
+    if (isSignedIn) {
+      // User is signed in - change login link to logout functionality
+      navLoginLink.textContent = 'Logout';
+      navLoginLink.href = '#';
+      // Remove any previous event listener and add the logout functionality
+      navLoginLink.onclick = function(e) {
+        e.preventDefault();
+        signOut().then(() => {
+          console.log('Successfully signed out');
+          // The UI will be updated automatically by the auth state listener
+        }).catch((error) => {
+          console.error('Error signing out:', error);
+        });
+      };
+    } else {
+      // User is not signed in - ensure it's a login link
+      navLoginLink.textContent = 'Login';
+      navLoginLink.href = 'login.html';
+      navLoginLink.onclick = null;
+    }
+  }
+}
+
+// Function to check authentication status and update UI
+function checkAuthStatus() {
+  isUserSignedIn().then(isSignedIn => {
+    updateAuthUI(isSignedIn);
+    
+    // Set up auth state listener to handle changes in authentication status
+    auth.onAuthStateChanged(user => {
+      updateAuthUI(!!user);
+    });
+  });
 }
 
 // Slide-in animation trigger on page load
@@ -786,4 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
       iceCreamImage.classList.add("slide-in");
     }, 300);
   }
+  
+  // Check authentication status and update UI
+  checkAuthStatus();
 });
